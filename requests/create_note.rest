@@ -16,3 +16,13 @@ Content-Type: application/json
 
 {
 }
+
+###
+GET http://localhost:3002/api/notes/fakeurl
+
+###
+POST http://localhost:3002/api
+Content-Type: application/json
+
+{
+}
