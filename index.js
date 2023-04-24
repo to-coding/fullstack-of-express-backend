@@ -29,6 +29,23 @@ app.get('/', (request, response) => {
 app.get('/api/notes', (request, response) => {
     response.json(notes)
 })
+app.get('/api/notes/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const note = notes.find(note => note.id === id)
+
+    if (note) {
+        response.json(note)
+    } else {
+        response.status(404).end()
+    }
+})
+
+app.delete('/api/notes/:id', (request, response)=>{
+    const id = Number(request.params.id)
+    notes = notes.filter(n => n.id !== id)
+
+    response.status(204).end()
+})
 
 const PORT = 3002
 app.listen(PORT, () => {
