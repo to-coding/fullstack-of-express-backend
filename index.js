@@ -1,4 +1,6 @@
 const { request, response } = require('express')
+
+// express backend
 const express = require('express')
 const app = express()
 const requestLogger = (request, response, next) => {
@@ -9,43 +11,41 @@ const requestLogger = (request, response, next) => {
     next()
 }
 const unknownEndpoint = (request, response) => {
-    response.status(404).send({error: 'unknown endpoint'})
+    response.status(404).send({ error: 'unknown endpoint' })
 }
-const cors = require('cors')
 
+// allow cors
+const cors = require('cors')
 app.use(express.json())
 app.use(requestLogger)
 app.use(cors())
 app.use(express.static('build'))
 
-
-
-let notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        date: "2022-05-30T17:30:31.098Z",
-        important: true
-    },
-    {
-        id: 2,
-        content: "Browser can execute only Javascript",
-        date: "2022-05-30T18:39:34.091Z",
-        important: false
-    },
-    {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        date: "2022-05-30T19:20:14.298Z",
-        important: true
+// config mongo db
+const mongoose = require('mongoose')
+const url = `mongodb+srv://sece1024:sece@cluster0.5mrpqe5.mongodb.net/noteApp?retryWrites=true&w=majority`
+mongoose.connect(url)
+const noteSchema = new mongoose.Schema({
+    content: String,
+    date: Date,
+    important: Boolean,
+})
+// hide id & v
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
     }
-]
+})
+const Note = mongoose.model('Note', noteSchema)
 
 const generateId = () => {
     const maxId = notes.length > 0 ? Math.max(...notes.map(n => n.id)) : 0
     return maxId + 1
 }
 
+// define API
 app.post('/api/notes', (request, response) => {
     const body = request.body
 
@@ -72,7 +72,10 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-    response.json(notes)
+    Note.find({}).then(notes => {
+        console.log(notes)
+        response.json(notes)
+    })
 })
 app.get('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
