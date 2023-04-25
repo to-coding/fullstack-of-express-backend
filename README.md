@@ -1,3 +1,10 @@
+# Get Start
+```
+shell
+npm install
+npm run dev
+```
+
 ```
 shell
 # replace password to your mongodb passwd
