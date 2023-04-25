@@ -28,3 +28,16 @@ Content-Type: application/json
 
 {
 }
+
+
+###
+DELETE http://localhost:3001/api/notes/64478b8b07334bf85a276ba1
+
+###
+PUT  http://localhost:3001/api/notes/64478ca04dd2ea923195037c
+Content-Type: application/json
+
+{
+    "content": "VS Code REST client changed 2",
+    "important": false
+}
