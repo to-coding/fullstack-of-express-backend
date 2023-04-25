@@ -5,8 +5,8 @@ const url = process.env.MONGODB_URI //`mongodb+srv://sece1024:sece@cluster0.5mrp
 console.log('connecting to', url)
 
 mongoose.connect(url)
-  .then(result => {
-    console.log('connected to MongoDB')
+  .then(() => {
+    console.log('connected to MongoDB:')
   })
   .catch((error) => {
     console.log('error connecting to MongoDB:', error.message)
@@ -32,6 +32,5 @@ noteSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-const Note = mongoose.model('Note', noteSchema)
 
 module.exports = mongoose.model('Note', noteSchema)
