@@ -96,6 +96,26 @@ test('a note can be deleted', async () => {
     expect(contents).not.toContain(noteToDelete.content)
 })
 
+test('a note can be update', async () => {
+    const notesAtStart = await helper.notesInDb()
+    const noteToUpdate = notesAtStart[1]
+    const newNote = {
+        content: 'this note had been changed',
+        important: false
+    }
+
+    await api
+        .put(`/api/notes/${noteToUpdate.id}`)
+        .send(newNote)
+        .expect(200)
+
+    const notesAtEnd = await helper.notesInDb()
+    expect(noteToUpdate.content).not.toEqual('this note had been changed')
+    expect(notesAtEnd).toHaveLength(helper.initialNotes.length)
+    expect(notesAtEnd[1].id).toEqual(noteToUpdate.id)
+    expect(notesAtEnd[1].content).toEqual('this note had been changed')
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
