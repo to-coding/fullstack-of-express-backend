@@ -8,10 +8,11 @@ const Note = require('../models/note')
 
 beforeEach(async () => {
     await Note.deleteMany({})
-    let newObj = new Note(helper.initialNotes[0])
-    await newObj.save()
-    newObj = new Note(helper.initialNotes[1])
-    await newObj.save()
+
+    const noteObjs = helper.initialNotes.map(note => new Note(note))
+    const promiseArray = noteObjs.map(note => note.save())
+
+    await Promise.all(promiseArray)
 }, 100000)
 
 test('note are returned as json', async () => {
