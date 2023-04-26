@@ -13,14 +13,13 @@ notesRouter.post('/', (request, response, next) => {
 
     note.save()
         .then(savedNote => {
-            response.json(savedNote)
+            response.status(201).json(savedNote)
         })
         .catch(error => next(error))
 })
-notesRouter.get('/', (request, response) => {
-    Note.find({}).then(notes => {
-        response.json(notes)
-    })
+notesRouter.get('/', async (request, response) => {
+    const notes = await Note.find({})
+    response.json(notes)
 })
 notesRouter.get('/:id', (request, response, next) => {
     Note.findById(request.params.id)
