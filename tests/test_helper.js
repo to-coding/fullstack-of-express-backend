@@ -1,5 +1,6 @@
 const Note = require('../models/note')
 const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 const initialNotes = [
     {
@@ -32,9 +33,25 @@ const usersInDb = async () => {
     return users.map(u => u.toJSON())
 }
 
+const addUserInDb = async (username, name, password) => {
+    await User.deleteMany({})
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(password, saltRounds)
+
+    const user = new User({
+        username,
+        name,
+        passwordHash,
+    })
+    const userSaved = await user.save()
+
+    return userSaved
+}
+
 module.exports = {
     initialNotes,
     nonExistingId,
     notesInDb,
-    usersInDb
+    usersInDb,
+    addUserInDb
 }

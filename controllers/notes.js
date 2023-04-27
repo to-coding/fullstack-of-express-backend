@@ -3,19 +3,14 @@ const User = require('../models/user')
 const Note = require('../models/note')
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if(authorization && authorization.toLowerCase().startsWith('bearer ')){
-        return authorization.substring(7)
-    }
-    return null
+function decodeToken(token) {
+    return jwt.verify(token, process.env.SECRET)
 }
 
 // define API
 notesRouter.post('/', async (request, response) => {
     const body = request.body
-    const token = getTokenFrom(request)
-    const decodedToken = jwt.verify(token, process.env.SECRET)
+    const decodedToken = decodeToken(request.token)
     if(!decodedToken.id){
         return response.status(401).json({ error: 'token missing or invalid' })
     }

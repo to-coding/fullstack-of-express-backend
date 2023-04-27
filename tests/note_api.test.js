@@ -64,9 +64,17 @@ describe('addition of a new note', () => {
             important: true,
         }
 
+        await helper.addUserInDb('user1', 'testname', 'pwd')
+
+        const tokenResponse = await api
+            .post('/api/login')
+            .send({ username: 'user1', password: 'pwd' })
+
+
         await api
             .post('/api/notes')
             .send(newNote)
+            .set('Authorization', `bearer ${tokenResponse.body.token}`)
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
@@ -81,9 +89,15 @@ describe('addition of a new note', () => {
         const newNote = {
             important: true
         }
+        await helper.addUserInDb('user1', 'testname', 'pwd')
+
+        const tokenResponse = await api
+            .post('/api/login')
+            .send({ username: 'user1', password: 'pwd' })
 
         await api
             .post('/api/notes')
+            .set('Authorization', `bearer ${tokenResponse.body.token}`)
             .send(newNote)
             .expect(400)
 
@@ -97,9 +111,15 @@ describe('deletion of a note', () => {
     test('succeeds with statuscode 204 if id valid', async () => {
         const notesAtStart = await helper.notesInDb()
         const noteToDelete = notesAtStart[0]
+        await helper.addUserInDb('user1', 'testname', 'pwd')
+
+        const tokenResponse = await api
+            .post('/api/login')
+            .send({ username: 'user1', password: 'pwd' })
 
         await api
             .delete(`/api/notes/${noteToDelete.id}`)
+            .set('Authorization', `bearer ${tokenResponse.body.token}`)
             .expect(204)
 
         const notesAtEnd = await helper.notesInDb()
