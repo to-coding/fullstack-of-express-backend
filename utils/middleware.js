@@ -1,5 +1,4 @@
-const logger = require('./logger'
-)
+const logger = require('./logger')
 // express backend
 const requestLogger = (request, response, next) => {
     logger.info('Method:', request.method)
@@ -24,14 +23,28 @@ const errorHandler = (error, request, response, next) => {
         return response.status(401).json({
             error: 'invalid token'
         })
+    } else if (error.name === 'TokenExpiredError'){
+        return response.status(401).json({
+            error: 'token expired'
+        })
     }
 
     next(error)
+}
 
+// get token from response
+const tokenExtractor = ( request, response, next) => {
+    const authorization = request.get('authorization')
+    if(authorization && authorization.toLowerCase().startsWith('bearer ')){
+        request.token = authorization.substring(7)
+    }
+
+    next()
 }
 
 module.exports = {
     requestLogger,
     unknownEndpoint,
-    errorHandler
+    errorHandler,
+    tokenExtractor
 }
